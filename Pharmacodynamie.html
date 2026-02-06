@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QCM — Pharmacodynamie (Annales classées)</title>
+  <style>
+    :root{
+      --bg:#f5f6f8; --card:rgba(255,255,255,.78); --text:#111827; --muted:rgba(17,24,39,.62);
+      --border:rgba(17,24,39,.10); --shadow:0 18px 50px rgba(0,0,0,.10); --shadow-soft:0 10px 30px rgba(0,0,0,.08);
+      --accent:#2563eb; --accent-2:#7c3aed; --ok:#16a34a; --bad:#dc2626; --warn:#f59e0b;
+      --radius:22px; --radius-sm:14px; --focus:0 0 0 4px rgba(37,99,235,.20);
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      --sans:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box} html,body{height:100%}
+    body{
+      margin:0; font-family:var(--sans); color:var(--text);
+      background:
+        radial-gradient(900px 700px at 15% 10%, rgba(37,99,235,.18), transparent 55%),
+        radial-gradient(900px 700px at 85% 0%, rgba(124,58,237,.16), transparent 55%),
+        radial-gradient(900px 700px at 50% 110%, rgba(16,185,129,.12), transparent 55%),
+        var(--bg);
+      display:grid; place-items:center; padding:28px 16px;
+    }
+    .app{width:min(980px,100%); display:grid; gap:14px}
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:14px 16px; border-radius:var(--radius);
+      background:rgba(255,255,255,.55); border:1px solid var(--border);
+      box-shadow:var(--shadow-soft); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    }
+    .brand{display:flex; flex-direction:column; gap:4px; min-width:220px}
+    .brand .title{font-weight:720; letter-spacing:-.02em; font-size:15px; line-height:1.15}
+    .brand .subtitle{font-size:12px; color:var(--muted); line-height:1.15}
+    .status{display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:flex-end}
+    .pill{
+      display:inline-flex; align-items:center; gap:10px; padding:10px 12px; border-radius:999px;
+      border:1px solid var(--border); background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+      box-shadow:0 6px 18px rgba(0,0,0,.06); user-select:none; white-space:nowrap;
+    }
+    .pill .label{font-size:12px; color:var(--muted); letter-spacing:.02em}
+    .pill .value{font-variant-numeric:tabular-nums; font-weight:800; font-size:13px}
+    .timer-ring{
+      width:34px; height:34px; border-radius:50%; position:relative; display:grid; place-items:center; overflow:hidden;
+      background:conic-gradient(var(--accent) var(--deg,360deg), rgba(17,24,39,.10) 0);
+    }
+    .timer-ring::after{content:""; width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.92); box-shadow:inset 0 0 0 1px rgba(17,24,39,.08)}
+    .timer-ring span{position:absolute; font-variant-numeric:tabular-nums; font-weight:900; font-size:12px; color:rgba(17,24,39,.82)}
+    .card{
+      border-radius:var(--radius); border:1px solid var(--border); background:var(--card);
+      box-shadow:var(--shadow); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); overflow:hidden;
+    }
+    .card-inner{padding:22px 22px 18px; display:grid; gap:16px}
+    .q-head{display:flex; gap:14px; align-items:flex-start; justify-content:space-between}
+    .q-meta{display:flex; flex-direction:column; gap:8px}
+    .q-meta .kicker{font-size:12px; color:var(--muted); letter-spacing:.06em; text-transform:uppercase}
+    .q-meta .question{font-size:18px; line-height:1.25; letter-spacing:-.02em; font-weight:760; white-space:pre-wrap}
+    .badge{
+      padding:9px 12px; border-radius:999px; font-size:12px; font-weight:700;
+      border:1px solid var(--border); background:rgba(255,255,255,.75); color:rgba(17,24,39,.82);
+      user-select:none; flex:0 0 auto;
+    }
+    .mode-row{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:2px; font-size:12.5px; color:rgba(17,24,39,.80)}
+    .chip{
+      font-family:var(--mono); font-size:12px; padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(17,24,39,.14); background:rgba(255,255,255,.78);
+    }
+    .options{display:grid; gap:10px}
+    .opt{position:relative}
+    .opt input{position:absolute; opacity:0; pointer-events:none}
+    .opt label{
+      display:flex; align-items:flex-start; gap:12px; padding:14px 14px;
+      border-radius:var(--radius-sm); border:1px solid rgba(17,24,39,.12);
+      background:rgba(255,255,255,.70); box-shadow:0 8px 22px rgba(0,0,0,.06);
+      cursor:pointer; user-select:none;
+      transition:transform .08s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+    }
+    .opt label:hover{transform:translateY(-1px); box-shadow:0 12px 28px rgba(0,0,0,.08); border-color:rgba(37,99,235,.24)}
+    .opt input:focus-visible + label{outline:none; box-shadow:var(--focus),0 12px 28px rgba(0,0,0,.08); border-color:rgba(37,99,235,.35)}
+    .tick{
+      width:18px; height:18px; border-radius:6px; border:2px solid rgba(17,24,39,.28);
+      display:grid; place-items:center; flex:0 0 auto; background:rgba(255,255,255,.90); margin-top:1px;
+    }
+    .tick::after{
+      content:""; width:10px; height:10px; border-radius:3px; transform:scale(0); transition:transform .16s ease;
+      background:linear-gradient(135deg, var(--accent), var(--accent-2));
+    }
+    .opt input:checked + label{border-color:rgba(37,99,235,.45); background:rgba(37,99,235,.06)}
+    .opt input:checked + label .tick{border-color:rgba(37,99,235,.65)}
+    .opt input:checked + label .tick::after{transform:scale(1)}
+    .opt .text{font-size:14.5px; line-height:1.25; color:rgba(17,24,39,.90)}
+    .actions{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:4px; flex-wrap:wrap}
+    .btn{
+      appearance:none; border:1px solid rgba(17,24,39,.14); background:rgba(255,255,255,.80);
+      padding:12px 14px; border-radius:999px; font-weight:800; letter-spacing:-.01em;
+      cursor:pointer; box-shadow:0 10px 26px rgba(0,0,0,.07);
+      transition:transform .08s ease, box-shadow .2s ease, border-color .2s ease, opacity .2s ease;
+    }
+    .btn:hover{transform:translateY(-1px); box-shadow:0 14px 34px rgba(0,0,0,.10)}
+    .btn:active{transform:translateY(0)}
+    .btn:focus-visible{outline:none; box-shadow:var(--focus),0 14px 34px rgba(0,0,0,.10)}
+    .btn-primary{border-color:rgba(37,99,235,.35); background:linear-gradient(135deg, rgba(37,99,235,.16), rgba(124,58,237,.12))}
+    .btn-ghost{border-color:rgba(17,24,39,.14); background:rgba(255,255,255,.70)}
+    .btn-primary[disabled]{opacity:.55; cursor:not-allowed; transform:none; box-shadow:0 10px 26px rgba(0,0,0,.05)}
+    .hint{font-size:12px; color:var(--muted); line-height:1.2; user-select:none}
+    .explanation{border-top:1px dashed rgba(17,24,39,.16); padding-top:14px; display:none; gap:10px}
+    .explanation.show{display:grid}
+    .exp-title{display:flex; align-items:center; gap:10px; font-weight:900; font-size:13px}
+    .pillchip{
+      font-family:var(--mono); font-size:12px; padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(17,24,39,.14); background:rgba(255,255,255,.78);
+    }
+    .exp-text{
+      font-size:13.5px; color:rgba(17,24,39,.82); line-height:1.35;
+      background:rgba(255,255,255,.55); border:1px solid rgba(17,24,39,.10);
+      padding:12px 12px; border-radius:14px;
+      white-space:pre-wrap;
+    }
+    .state-ok{
+      border-color:rgba(22,163,74,.28); box-shadow:0 18px 50px rgba(22,163,74,.16);
+      background:radial-gradient(700px 320px at 15% 0%, rgba(22,163,74,.12), transparent 55%), var(--card);
+    }
+    .state-bad{
+      border-color:rgba(220,38,38,.28); box-shadow:0 18px 50px rgba(220,38,38,.16);
+      background:radial-gradient(700px 320px at 15% 0%, rgba(220,38,38,.12), transparent 55%), var(--card);
+    }
+    .footer{text-align:center; font-size:12px; color:rgba(17,24,39,.55); padding:6px 4px 0; user-select:none}
+    .end{
+      padding:26px 18px; display:grid; gap:12px; text-align:center;
+      background:rgba(255,255,255,.70); border-radius:var(--radius); border:1px solid var(--border);
+      box-shadow:var(--shadow); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    }
+    .end h2{margin:0; font-size:22px; letter-spacing:-.02em}
+    .end p{margin:0; color:var(--muted); font-size:13.5px; line-height:1.35}
+    .wrong-list{margin-top:6px; text-align:left; display:grid; gap:8px}
+    .wrong-item{
+      padding:12px 12px; border-radius:14px; border:1px solid rgba(17,24,39,.10);
+      background:rgba(255,255,255,.60); display:grid; gap:4px;
+    }
+    .wrong-item .w-title{font-weight:850; letter-spacing:-.01em; font-size:13px}
+    .wrong-item .w-sub{font-size:12.5px; color:rgba(17,24,39,.70); line-height:1.25}
+    @media (max-width:520px){
+      .q-meta .question{font-size:16.5px}
+      .card-inner{padding:18px 16px 14px}
+      .topbar{padding:12px 12px}
+      .brand{min-width:0}
+    }
+  </style>
+</head>
+
+<body>
+<main class="app" role="application" aria-label="QCM interactif">
+  <header class="topbar" aria-label="Barre de statut">
+    <div class="brand">
+      <div class="title">UE2.3 — Pharmacodynamie (Annales classées)</div>
+      <div class="subtitle">90 s par question • “Passer” après correction • fin : liste des ratées + rattrapage</div>
+    </div>
+
+    <div class="status">
+      <div class="pill" aria-label="Minuteur">
+        <div class="timer-ring" id="timerRing" style="--deg: 360deg;"><span id="timerText">90</span></div>
+        <div>
+          <div class="label">Temps restant</div>
+          <div class="value"><span id="timerLabel">90</span> s</div>
+        </div>
+      </div>
+
+      <div class="pill" aria-label="Progression">
+        <div>
+          <div class="label">Progression</div>
+          <div class="value"><span id="progressText">1</span>/<span id="totalText">0</span></div>
+        </div>
+      </div>
+
+      <div class="pill" aria-label="Score">
+        <div>
+          <div class="label">Score</div>
+          <div class="value"><span id="scoreText">0</span></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="card" id="card" aria-live="polite">
+    <div class="card-inner">
+      <div class="q-head">
+        <div class="q-meta">
+          <div class="kicker" id="kicker">Question</div>
+          <div class="question" id="questionText">—</div>
+          <div class="mode-row">
+            <span class="chip" id="modeChip">MODE: COMPLET</span>
+            <span id="helperText" style="color:rgba(17,24,39,.70)"></span>
+          </div>
+        </div>
+        <div class="badge" id="badge">90 s</div>
+      </div>
+
+      <div id="answerArea">
+        <div class="options" id="options"></div>
+      </div>
+
+      <div class="actions">
+        <div class="hint" id="hint">Sélectionne puis clique sur <b>Valider</b>.</div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;">
+          <button class="btn btn-ghost" id="skipBtn" style="display:none;">Passer</button>
+          <button class="btn btn-primary" id="validateBtn" disabled>Valider</button>
+        </div>
+      </div>
+
+      <div class="explanation" id="explanation">
+        <div class="exp-title">
+          <span class="pillchip" id="expChip">—</span>
+          <span id="expLabel">Correction</span>
+        </div>
+        <div class="exp-text" id="expText">—</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">Liste <span style="font-family: var(--mono)">questions</span> modifiable.</div>
+
+  <section id="endScreen" class="end" style="display:none;">
+    <h2 id="endTitle">Fin du QCM !</h2>
+    <p id="endSummary">—</p>
+
+    <div id="wrongBlock" style="display:none;">
+      <div style="margin-top:10px; font-weight:900; letter-spacing:-0.01em;">Questions ratées</div>
+      <div class="wrong-list" id="wrongList"></div>
+    </div>
+
+    <div style="display:flex; justify-content:center; gap:10px; margin-top:8px; flex-wrap:wrap;">
+      <button class="btn" id="restartBtn">Recommencer (tout)</button>
+      <button class="btn btn-primary" id="retryWrongBtn" style="display:none;">Refaire les ratées</button>
+    </div>
+  </section>
+</main>
+
+<script>
+/**********************************************************************
+ * OUTILS
+ **********************************************************************/
+const clamp = (n,a,b)=>Math.max(a,Math.min(b,n));
+const arraysEqual = (a,b)=>a.length===b.length && a.every((v,i)=>v===b[i]);
+const letterToIndex = (L) => ({A:0,B:1,C:2,D:3,E:4,a:0,b:1,c:2,d:3,e:4}[L]);
+const lettersToArray = (s) => s.split("").map(letterToIndex).filter(v => Number.isInteger(v)).sort((a,b)=>a-b);
+
+/**********************************************************************
+ * QUESTIONS — Pharmacodynamie (SUJET + CORRIGÉ)
+ * NB: QCM multi si plusieurs réponses vraies.
+ **********************************************************************/
+const questions = [
+  // ===== 2021 PASS
+  {
+    id:"2021-PASS-Q19", source:"2021 PASS — Question 19", type:"mcq",
+    question:"Concernant la liaison ligand-récepteur :",
+    options:[
+      "A - la comparaison d'affinité de ligands différents pour un même récepteur permet de sélectionner le médicament le plus sélectif pour ce même récepteur",
+      "B - plus la constante de dissociation Kd est élevée, plus le ligand a des chances d'être sélectif",
+      "C - plus la sélectivité du ligand pour un récepteur est faible, plus il faudra diminuer les concentrations nécessaires pour induire un effet et plus le ligand aura des chances d'induire d'autres effets",
+      "D - la sélectivité est absolue même lorsqu'on augmente les concentrations",
+      "E - il est considéré que le ligand A est sélectif pour le récepteur A vis-à-vis du récepteur B si KdB/KdA < 10"
+    ],
+    correct: lettersToArray("A"),
+    explanation:
+`A) VRAI.
+B) FAUX. Plus Kd est faible, plus le ligand a des chances d'être sélectif.
+C) FAUX. Moins c'est sélectif, plus il faut augmenter les concentrations, et plus il y a des effets hors-cible.
+D) FAUX. La sélectivité disparaît quand on augmente les concentrations.
+E) FAUX. Sélectif si KdB/KdA > 100.`
+  },
+  {
+    id:"2021-PASS-Q20", source:"2021 PASS — Question 20", type:"mcq",
+    question:"Concernant les récepteurs en pharmacologie :",
+    options:[
+      "A - la liaison ligand-récepteur est saturable",
+      "B - la liaison ligand-récepteur entraîne une réponse",
+      "C - tous les récepteurs ont des ligands connus",
+      "D - un récepteur ne peut avoir qu'un seul ligand",
+      "E - un récepteur ne peut avoir qu'un seul antagoniste"
+    ],
+    correct: lettersToArray("AB"),
+    explanation:
+`A) VRAI.
+B) VRAI.
+C) FAUX. Récepteurs orphelins.
+D) FAUX. Un récepteur peut avoir plusieurs ligands.
+E) FAUX. Un récepteur peut avoir plusieurs antagonistes.`
+  },
+  {
+    id:"2021-PASS-Q21", source:"2021 PASS — Question 21", type:"mcq",
+    question:"Un principe actif peut induire un effet pharmacologique via :",
+    options:[
+      "A - des cibles non spécifiques",
+      "B - des cibles spécifiques",
+      "C - des cibles inconnues",
+      "D - un récepteur",
+      "E - une enzyme"
+    ],
+    correct: lettersToArray("ABCDE"),
+    explanation:`A) VRAI.\nB) VRAI.\nC) VRAI.\nD) VRAI.\nE) VRAI.`
+  },
+  {
+    id:"2021-PASS-Q22", source:"2021 PASS — Question 22", type:"mcq",
+    question:"Concernant les phénomènes de tolérance :",
+    options:[
+      "A - les phénomènes de désensibilisation par diminution du nombre de récepteurs peuvent expliquer la tolérance",
+      "B - l'administration répétée de certains agonistes peut induire une régulation négative de leurs récepteurs",
+      "C - l'administration répétée de certains antagonistes peut induire une régulation positive de leurs récepteurs",
+      "D - des modifications structurales dans les différentes sous-unités d'un récepteur peuvent expliquer la tolérance",
+      "E - la morphine peut induire des phénomènes de tolérance"
+    ],
+    correct: lettersToArray("ABCDE"),
+    explanation:`A) VRAI.\nB) VRAI.\nC) VRAI.\nD) VRAI.\nE) VRAI.`
+  },
+
+  // ===== 2021 (suite)
+  {
+    id:"2021-Q23", source:"2021 — Question 23", type:"mcq",
+    question:"À l'aide de la figure (index thérapeutique) et de vos connaissances, quelle(s) proposition(s) est(sont) exacte(s) ?",
+    options:[
+      "A - il dépend seulement de la dose induisant les effets indésirables",
+      "B - il dépend seulement de la dose induisant les effets thérapeutiques",
+      "C - les anticoagulants oraux nécessitent un ajustement rigoureux de la dose",
+      "D - la pénicilline possède un index thérapeutique large",
+      "E - les anticoagulants oraux possèdent un index thérapeutique large"
+    ],
+    correct: lettersToArray("CD"),
+    explanation:
+`A) FAUX.\nB) FAUX.\nC) VRAI.\nD) VRAI.\nE) FAUX. Les anticoagulants oraux ont un index thérapeutique étroit.`
+  },
+  {
+    id:"2021-Q24", source:"2021 — Question 24", type:"mcq",
+    question:"Concernant les récepteurs en pharmacologie :",
+    options:[
+      "A - le site d'interaction entre un ligand et un récepteur couplé à la protéine G est intranucléaire",
+      "B - le site d'interaction entre un ligand et un récepteur canal est intranucléaire",
+      "C - le site d'interaction entre un ligand et un récepteur enzyme est intranucléaire",
+      "D - le site d'interaction entre un antagoniste et un récepteur canal est intranucléaire",
+      "E - le site d'interaction entre un antagoniste et un récepteur enzyme est membranaire"
+    ],
+    correct: lettersToArray("E"),
+    explanation:
+`A) FAUX. Site extracellulaire (RCPG).
+B) FAUX. Récepteur-canal : membranaire, côté extracellulaire.
+C) FAUX. Récepteur-enzyme : membranaire, côté extracellulaire.
+D) FAUX. Antagoniste récepteur-canal : membranaire, côté extracellulaire.
+E) VRAI.`
+  },
+
+  // ===== 2021 PACES
+  {
+    id:"2021-PACES-Q31", source:"2021 PACES — Question 31 (CE50)", type:"mcq",
+    question:"Concernant la CE50 :",
+    options:[
+      "A) elle correspond à la puissance d'un ligand",
+      "B) elle correspond à la concentration qui déclenche 50% de l'effet maximal",
+      "C) la CE50 d'un ligand pour son récepteur augmente en présence d'un antagoniste compétitif réversible de ce récepteur",
+      "D) la CE50 d'un ligand pour son récepteur augmente en présence d'un modulateur allostérique positif de ce récepteur"
+    ],
+    correct: lettersToArray("ABC"),
+    explanation:
+`A) VRAI.\nB) VRAI.\nC) VRAI.\nD) FAUX. Un modulateur allostérique positif déplace la courbe vers la gauche (CE50 diminue).`
+  },
+  {
+    id:"2021-PACES-Q32", source:"2021 PACES — Question 32 (Sélectivité)", type:"mcq",
+    question:"Concernant la sélectivité :",
+    options:[
+      "A) une sélectivité élevée permet d'obtenir un effet plus ciblé",
+      "B) l'augmentation des doses limite la sélectivité d'un principe actif",
+      "C) le manque de sélectivité permet d'expliquer certains effets indésirables et certaines interactions médicamenteuses pharmacodynamiques",
+      "D) un principe actif est sélectif du récepteur A vis-à-vis du récepteur B quand son Kd pour le récepteur A est 100 fois plus faible que son Kd pour le récepteur B"
+    ],
+    correct: lettersToArray("ABC"),
+    explanation:
+`A) VRAI.\nB) VRAI.\nC) VRAI.\nD) FAUX. Critère: Kd(A) 100x plus faible que Kd(B) (donc KdB/KdA > 100).`
+  },
+
+  // ===== Q33, Q35, Q36
+  {
+    id:"2021-Q33", source:"Question 33", type:"mcq",
+    question:"Concernant les phénomènes de variabilité et de régulation pharmacodynamique :",
+    options:[
+      "A) la contre-régulation diminue l'effet de la substance active",
+      "B) la contre-régulation par la réduction du nombre de récepteurs concerne les antagonistes",
+      "C) ils nécessitent des adaptations posologiques et pharmacologiques",
+      "D) ils limitent la possibilité d'arrêt thérapeutique brutal"
+    ],
+    correct: lettersToArray("ACD"),
+    explanation:
+`A) VRAI.\nB) FAUX. Réduction du nombre de récepteurs : surtout avec agonistes (down regulation).\nC) VRAI.\nD) VRAI.`
+  },
+  {
+    id:"2021-Q35", source:"Question 35", type:"mcq",
+    question:"Un principe actif peut déclencher un effet pharmacologique via une cible :",
+    options:[
+      "A) connue",
+      "B) inconnue",
+      "C) spécifique",
+      "D) non spécifique"
+    ],
+    correct: lettersToArray("ABCD"),
+    explanation:`A) VRAI.\nB) VRAI.\nC) VRAI.\nD) VRAI.`
+  },
+  {
+    id:"2021-Q36", source:"Question 36 (β-bloquants, sélectivité d'effet)", type:"mcq",
+    question:"DE50 β-bloquant A: β1=1 mg/kg ; β2=1000 mg/kg. β-bloquant B: β1=100 mg/kg ; β2=1000 mg/kg.\nSachant β1 ↑ rythme/PA et β2 = bronchodilatation.\nQuelles propositions sont exactes ?",
+    options:[
+      "A) le β-bloquant A possède une sélectivité d'effet pour les récepteurs β1-adrénergiques",
+      "B) le β-bloquant B possède une sélectivité d'effet pour les récepteurs β1-adrénergiques",
+      "C) le β-bloquant B déclenchera davantage d'effets secondaires (bronchoconstriction, dépression respiratoire) via β2",
+      "D) le β-bloquant A est plus approprié que le β-bloquant B chez le patient asthmatique hypertendu"
+    ],
+    correct: lettersToArray("ACD"),
+    explanation:
+`A) VRAI. DE50(β2)/DE50(β1)=1000/1>100.
+B) FAUX. 1000/100=10<100.
+C) VRAI.
+D) VRAI.`
+  },
+
+  // ===== 2020
+  {
+    id:"2020-Q25", source:"2020 — Question 25", type:"mcq",
+    question:"Réponse d'un récepteur β2-adrénergique stimulé par un agoniste (ex: salbutamol) :",
+    options:[
+      "A) est inversement proportionnelle à l'activité intrinsèque de ce ligand",
+      "B) augmente lorsque la concentration de l’agoniste augmente",
+      "C) dépend de la constante d'affinité de ce ligand",
+      "D) peut être réduite par désensibilisation homologue"
+    ],
+    correct: lettersToArray("BCD"),
+    explanation:
+`A) FAUX.\nB) VRAI.\nC) VRAI.\nD) VRAI.`
+  },
+  {
+    id:"2020-Q26", source:"2020 — Question 26 (β-bloquants)", type:"mcq",
+    question:"DE50 bétabloquant A: β1=1 mg/kg ; β2=10000 mg/kg. bétabloquant B: β1=100 mg/kg ; β2=1000 mg/kg.\nQuelles propositions sont exactes ?",
+    options:[
+      "A) le bétabloquant A possède une sélectivité d'effet pour β1",
+      "B) le bétabloquant B possède une sélectivité d'effet pour β1",
+      "C) le bétabloquant B déclenchera davantage d'effets secondaires (bronchoconstriction, dépression respiratoire) via β2",
+      "D) le bétabloquant A est plus approprié que le bétabloquant B chez l'asthmatique hypertendu"
+    ],
+    correct: lettersToArray("ACD"),
+    explanation:
+`A) VRAI.\nB) FAUX.\nC) VRAI.\nD) VRAI.`
+  },
+
+  // ===== Q27–Q31
+  {
+    id:"Q27", source:"Question 27 (efficacité / puissance)", type:"mcq",
+    question:"En analysant le graphique (effet d’agonistes vs log concentration), quelles propositions sont exactes ?",
+    options:[
+      "A) A est plus efficace que B",
+      "B) A est plus puissant que B",
+      "C) E est plus puissant que D",
+      "D) D est plus efficace que B"
+    ],
+    correct: lettersToArray("B"),
+    explanation:
+`A) FAUX.\nB) VRAI.\nC) FAUX.\nD) FAUX.`
+  },
+  {
+    id:"Q28", source:"Question 28 (ligand B)", type:"mcq",
+    question:"L’analyse des deux figures (activité GTPase / courbes concentration-effet) permet de conclure que le ligand B peut être :",
+    options:[
+      "A) un antagoniste compétitif réversible des récepteurs M2",
+      "B) un antagoniste compétitif irréversible des récepteurs M2",
+      "C) un agoniste entier des récepteurs M2",
+      "D) un agoniste inverse des récepteurs M2"
+    ],
+    correct: lettersToArray("AD"),
+    explanation:
+`A) VRAI.\nB) FAUX.\nC) FAUX.\nD) VRAI.`
+  },
+  {
+    id:"Q29", source:"Question 29 (index thérapeutique)", type:"mcq",
+    question:"À propos de l'index thérapeutique (graphes) :",
+    options:[
+      "A) il dépend seulement de la dose induisant les effets indésirables",
+      "B) il dépend seulement de la dose induisant les effets thérapeutiques",
+      "C) l'anticoagulant nécessite un ajustement rigoureux de la dose",
+      "D) la pénicilline possède un index thérapeutique étroit"
+    ],
+    correct: lettersToArray("C"),
+    explanation:
+`A) FAUX.\nB) FAUX.\nC) VRAI.\nD) FAUX.`
+  },
+  {
+    id:"Q30", source:"Question 30", type:"mcq",
+    question:"Paramètre(s) utilisé(s) pour indiquer la capacité d'un médicament à se lier à un récepteur :",
+    options:[
+      "A) sa puissance",
+      "B) son activité intrinsèque",
+      "C) son efficacité",
+      "D) sa biodisponibilité"
+    ],
+    correct: lettersToArray("ABC"),
+    explanation:
+`A) VRAI.\nB) VRAI.\nC) VRAI.\nD) FAUX.`
+  },
+  {
+    id:"Q31", source:"Question 31 (variabilité réponse pharmacodynamique)", type:"mcq",
+    question:"À propos de la variabilité de la réponse pharmacodynamique :",
+    options:[
+      "A) un patient ne développe jamais de tolérance au propranolol (bétabloquant antagoniste)",
+      "B) l'arrêt brutal d'un bétabloquant peut entraîner un effet rebond (tachycardie, ↑ TA)",
+      "C) administration répétée d'un bétabloquant → down regulation des récepteurs adrénergiques",
+      "D) la down regulation diminue la synthèse des récepteurs ou accélère leur internalisation"
+    ],
+    correct: lettersToArray("BD"),
+    explanation:
+`A) FAUX.\nB) VRAI.\nC) FAUX. Répétition d’un antagoniste → plutôt up regulation.\nD) VRAI.`
+  },
+
+  // ===== 2019
+  {
+    id:"2019-Q21", source:"2019 — Question 21 (morphine/buprénorphine)", type:"mcq",
+    question:"Morphine: agoniste entier µ, 50% effet à 1 mg/kg. Buprénorphine: 50% effet à 0,1 mg/kg, max = 50% du max de morphine.\nOn ajoute buprénorphine chez patient sous morphine.\nOn peut en déduire que :",
+    options:[
+      "A) la buprénorphine est un agoniste entier µ",
+      "B) la morphine est un agoniste partiel µ",
+      "C) la buprénorphine limitera l'effet de la morphine",
+      "D) la buprénorphine est un antagoniste µ"
+    ],
+    correct: lettersToArray("CD"),
+    explanation:
+`A) FAUX.\nB) FAUX.\nC) VRAI.\nD) VRAI.`
+  },
+  {
+    id:"2019-Q22", source:"2019 — Question 22", type:"mcq",
+    question:"Paramètre(s) d'un médicament déterminant le nombre de complexes médicament–récepteur formés :",
+    options:[
+      "A) son efficacité",
+      "B) son affinité",
+      "C) son index thérapeutique",
+      "D) sa demi-vie"
+    ],
+    correct: lettersToArray("AB"),
+    explanation:
+`A) VRAI.\nB) VRAI.\nC) FAUX.\nD) FAUX.`
+  },
+  {
+    id:"2019-Q24", source:"2019 — Question 24 (graph agonistes)", type:"mcq",
+    question:"À la lecture du graphique (agonistes), quelles propositions sont exactes ?",
+    options:[
+      "A) A est aussi efficace que B",
+      "B) E est le moins puissant des agonistes",
+      "C) D est moins efficace que B",
+      "D) C est plus efficace que E"
+    ],
+    correct: lettersToArray("BC"),
+    explanation:
+`A) FAUX.\nB) VRAI.\nC) VRAI.\nD) FAUX.`
+  },
+  {
+    id:"2019-Q25", source:"2019 — Question 25 (β1 agoniste)", type:"mcq",
+    question:"Réponse d'un récepteur β1-adrénergique stimulé par un agoniste (ex: isoprénaline) :",
+    options:[
+      "A) est proportionnelle à l'activité intrinsèque de ce ligand",
+      "B) augmente lorsque la concentration de l'agoniste augmente",
+      "C) est corrélée à l'augmentation d'AMPc intracellulaire",
+      "D) diminue lors d'administrations répétées d'une même dose à intervalles courts"
+    ],
+    correct: lettersToArray("ABCD"),
+    explanation:`A) VRAI.\nB) VRAI.\nC) VRAI.\nD) VRAI.`
+  },
+
+  // ===== 2017 / 2014 / 2013 / 2012 / 2011
+  {
+    id:"2017-Q21", source:"2017 — Question 21", type:"mcq",
+    question:"La réponse d’un récepteur stimulé par un ligand agoniste :",
+    options:[
+      "A. est proportionnelle à l’activité intrinsèque de ce ligand",
+      "B. augmente lorsque la concentration de l’agoniste augmente",
+      "C. dépend de la puissance de l'agoniste",
+      "D. dépend de l'effet maximal de l'agoniste"
+    ],
+    correct: lettersToArray("ABCD"),
+    explanation:`A) VRAI.\nB) VRAI.\nC) VRAI.\nD) VRAI.`
+  },
+  {
+    id:"2014-Q12", source:"2014 — Question 12", type:"mcq",
+    question:"La réponse d’un récepteur stimulé par un ligand agoniste :",
+    options:[
+      "A. est proportionnelle à l’activité intrinsèque du ligand",
+      "B. augmente lorsque la concentration de l’agoniste augmente",
+      "C. dépend de la CE50 de l'agoniste",
+      "D. dépend de l'effet maximal de l'agoniste"
+    ],
+    correct: lettersToArray("ABCD"),
+    explanation:`A) VRAI.\nB) VRAI.\nC) VRAI.\nD) VRAI.`
+  },
+  {
+    id:"2014-Q14", source:"2014 — Question 14", type:"mcq",
+    question:"Concernant la relation concentration-effet d’un médicament :",
+    options:[
+      "A. un agoniste entier a une activité intrinsèque supérieure à celle d’un agoniste partiel",
+      "B. un agoniste partiel a une activité intrinsèque supérieure à celle d’un antagoniste",
+      "C. en présence d’un antagoniste, la courbe concentration-effet d’un agoniste entier peut être déplacée vers la gauche",
+      "D. un agoniste inverse a une activité intrinsèque négative"
+    ],
+    correct: lettersToArray("ABD"),
+    explanation:
+`A) VRAI.\nB) VRAI.\nC) FAUX.\nD) VRAI.`
+  },
+  {
+    id:"2013-Q14", source:"2013 — Question 14", type:"mcq",
+    question:"Quelles propositions sont exactes concernant la relation concentration-effet ?",
+    options:[
+      "A. Un agoniste entier a un effet maximum inférieur à celui d’un agoniste partiel.",
+      "B. Un agoniste partiel a un effet maximum supérieur à celui d’un antagoniste.",
+      "C. En présence d’un agoniste partiel, la courbe concentration-effet d’un agoniste entier peut être déplacée vers la droite.",
+      "D. En présence d’un antagoniste, la courbe concentration-effet d’un agoniste entier est déplacée vers la gauche."
+    ],
+    correct: lettersToArray("BC"),
+    explanation:
+`A) FAUX.\nB) VRAI.\nC) VRAI.\nD) FAUX.`
+  },
+  {
+    id:"2012-Q13", source:"2012 — Question 13", type:"mcq",
+    question:"Quelle est la proposition exacte concernant les mécanismes d’action des médicaments ?",
+    options:[
+      "A. Un antagoniste est incapable de se fixer sur un récepteur.",
+      "B. Un antagoniste n'a pas d'effet propre.",
+      "C. Le blocage d’un récepteur par un antagoniste est toujours compétitif.",
+      "D. La sélectivité d'un ligand pour un récepteur est indépendante de son affinité."
+    ],
+    correct: lettersToArray("B"),
+    explanation:
+`A) FAUX.\nB) VRAI.\nC) FAUX.\nD) FAUX.`
+  },
+  {
+    id:"2012-Q15", source:"2012 — Question 15", type:"mcq",
+    question:"Quelles sont les propositions exactes concernant les caractéristiques pharmacologiques des cibles spécifiques des médicaments ?",
+    options:[
+      "A. La CE50 correspond à la concentration induisant 50% de l'effet maximal.",
+      "B. Plus Kd est grand, plus l’affinité du ligand pour la cible est grande.",
+      "C. La sélectivité disparaît généralement aux fortes doses.",
+      "D. L’activité intrinsèque (alpha) d’un antagoniste est toujours supérieure à celle d’un agoniste entier."
+    ],
+    correct: lettersToArray("AC"),
+    explanation:
+`A) VRAI.\nB) FAUX.\nC) VRAI.\nD) FAUX.`
+  },
+  {
+    id:"Q17", source:"Question 17 (CE50)", type:"mcq",
+    question:"Quelles propositions sont exactes concernant la concentration efficace 50 (CE50) d’un médicament ?",
+    options:[
+      "A. La CE50 est la concentration nécessaire pour observer 75% de l’effet maximum.",
+      "B. La CE50 est un paramètre pharmacodynamique.",
+      "C. La CE50 caractérise la puissance du médicament.",
+      "D. Plus la valeur de la CE50 est élevée, plus la puissance du médicament est forte."
+    ],
+    correct: lettersToArray("BC"),
+    explanation:
+`A) FAUX.\nB) VRAI.\nC) VRAI.\nD) FAUX.`
+  },
+  {
+    id:"2011-Q12", source:"2011 — Question 12", type:"mcq",
+    question:"Quelles sont les propositions exactes ?",
+    options:[
+      "A. La réponse d'un récepteur stimulé par un ligand agoniste est proportionnelle à l'activité intrinsèque de ce ligand.",
+      "B. La réponse d'un récepteur stimulé par un ligand agoniste augmente lorsque la concentration de l'agoniste augmente.",
+      "C. La réponse d'un récepteur stimulé par un ligand agoniste dépend de sa CE50.",
+      "D. La réponse d'un récepteur stimulé par un ligand agoniste est indépendante de son Emax."
+    ],
+    correct: lettersToArray("ABC"),
+    explanation:
+`A) VRAI.\nB) VRAI.\nC) VRAI.\nD) FAUX.`
+  },
+  {
+    id:"2011-Q13", source:"2011 — Question 13", type:"mcq",
+    question:"Quelles sont les propositions exactes ?",
+    options:[
+      "A. Un agoniste entier a un effet maximum inférieur à celui d'un agoniste partiel.",
+      "B. Un agoniste partiel a un effet maximum supérieur à celui d'un antagoniste.",
+      "C. En présence d'un antagoniste compétitif, la courbe concentration-effet d'un agoniste est déplacée vers la droite.",
+      "D. En présence d'un agoniste entier, un agoniste partiel peut se comporter comme un antagoniste."
+    ],
+    correct: lettersToArray("BCD"),
+    explanation:
+`A) FAUX.\nB) VRAI.\nC) VRAI.\nD) VRAI.`
+  },
+  {
+    id:"2011-Q14", source:"2011 — Question 14", type:"mcq",
+    question:"Quelles sont les propositions exactes ?",
+    options:[
+      "A. La CE50 traduit la puissance d’un agoniste.",
+      "B. La CE50 d'un agoniste correspond à la concentration qui produit 50% de l'effet maximum.",
+      "C. La CE50 d'un agoniste diminue en présence d'un antagoniste compétitif.",
+      "D. L'effet maximum d'un agoniste diminue en présence d'un antagoniste compétitif."
+    ],
+    correct: lettersToArray("AB"),
+    explanation:
+`A) VRAI.\nB) VRAI.\nC) FAUX (CE50 augmente).\nD) FAUX (Emax constant en antagonisme compétitif réversible).`
+  },
+];
+
+/**********************************************************************
+ * PARAMS
+ **********************************************************************/
+const SECONDS_PER_QUESTION = 90;
+const AUTO_NEXT_DELAY_CORRECT_MS = 4500;
+const AUTO_NEXT_DELAY_WRONG_MS   = 12000;
+
+/**********************************************************************
+ * STATE
+ **********************************************************************/
+let mode = "full";                 // "full" | "retry"
+let runQuestions = questions.slice();
+let index = 0;
+let score = 0;
+let remaining = SECONDS_PER_QUESTION;
+let timerId = null;
+let locked = false;
+let autoNextId = null;
+
+let wrongIds = new Set();
+let wrongSnapshots = [];
+
+/**********************************************************************
+ * DOM
+ **********************************************************************/
+const el = {
+  card: document.getElementById("card"),
+  questionText: document.getElementById("questionText"),
+  options: document.getElementById("options"),
+  answerArea: document.getElementById("answerArea"),
+  validateBtn: document.getElementById("validateBtn"),
+  skipBtn: document.getElementById("skipBtn"),
+  explanation: document.getElementById("explanation"),
+  expText: document.getElementById("expText"),
+  expChip: document.getElementById("expChip"),
+  expLabel: document.getElementById("expLabel"),
+  hint: document.getElementById("hint"),
+  badge: document.getElementById("badge"),
+  kicker: document.getElementById("kicker"),
+
+  timerText: document.getElementById("timerText"),
+  timerLabel: document.getElementById("timerLabel"),
+  timerRing: document.getElementById("timerRing"),
+
+  progressText: document.getElementById("progressText"),
+  totalText: document.getElementById("totalText"),
+  scoreText: document.getElementById("scoreText"),
+
+  endScreen: document.getElementById("endScreen"),
+  endTitle: document.getElementById("endTitle"),
+  endSummary: document.getElementById("endSummary"),
+  restartBtn: document.getElementById("restartBtn"),
+  retryWrongBtn: document.getElementById("retryWrongBtn"),
+  wrongBlock: document.getElementById("wrongBlock"),
+  wrongList: document.getElementById("wrongList"),
+
+  modeChip: document.getElementById("modeChip"),
+  helperText: document.getElementById("helperText"),
+};
+
+function clearAutoNext(){
+  if (autoNextId !== null){ clearTimeout(autoNextId); autoNextId = null; }
+}
+function setRingProgress(secondsLeft){
+  const ratio = secondsLeft / SECONDS_PER_QUESTION;
+  const deg = clamp(ratio, 0, 1) * 360;
+  el.timerRing.style.setProperty("--deg", deg + "deg");
+  if (secondsLeft <= 15) {
+    el.timerRing.style.background = `conic-gradient(var(--bad) ${deg}deg, rgba(17,24,39,.10) 0)`;
+  } else if (secondsLeft <= 30) {
+    el.timerRing.style.background = `conic-gradient(var(--warn) ${deg}deg, rgba(17,24,39,.10) 0)`;
+  } else {
+    el.timerRing.style.background = `conic-gradient(var(--accent) ${deg}deg, rgba(17,24,39,.10) 0)`;
+  }
+}
+function stopTimer(){ if (timerId !== null){ clearInterval(timerId); timerId = null; } }
+function renderTimer(){
+  const v = clamp(remaining, 0, SECONDS_PER_QUESTION);
+  el.timerText.textContent = String(v);
+  el.timerLabel.textContent = String(v);
+  el.badge.textContent = v + " s";
+  setRingProgress(v);
+}
+function startTimer(){
+  stopTimer();
+  remaining = SECONDS_PER_QUESTION;
+  renderTimer();
+  timerId = setInterval(() => {
+    if (locked) return;
+    remaining -= 1;
+    renderTimer();
+    if (remaining <= 0){ stopTimer(); onTimeUp(); }
+  }, 1000);
+}
+function resetCardState(){
+  el.card.classList.remove("state-ok", "state-bad");
+  el.explanation.classList.remove("show");
+  el.expText.textContent = "";
+  el.expChip.textContent = "—";
+  el.expLabel.textContent = "Correction";
+  el.hint.innerHTML = 'Sélectionne puis clique sur <b>Valider</b>.';
+  el.skipBtn.style.display = "none";
+  clearAutoNext();
+}
+function setModeUI(){
+  el.modeChip.textContent = mode === "retry" ? "MODE: RATTRAPAGE" : "MODE: COMPLET";
+  el.helperText.textContent =
+    mode === "retry"
+      ? "Tu refais uniquement les questions ratées."
+      : `Toutes les questions (${questions.length}).`;
+}
+function disableInputs(disabled){
+  el.options.querySelectorAll('input[name="opt"]').forEach(inp => inp.disabled = disabled);
+}
+function getSelectedSet(){
+  const checked = [...el.options.querySelectorAll('input[name="opt"]:checked')];
+  return checked.map(i => Number(i.value)).sort((a,b)=>a-b);
+}
+function wrongSnapshotsPushOnce(q){
+  if (wrongSnapshots.some(w => w.id === q.id)) return;
+  wrongSnapshots.push({ id: q.id, source: q.source, question: q.question });
+}
+function showEnd(){
+  el.card.style.display = "none";
+  el.endScreen.style.display = "grid";
+  stopTimer(); clearAutoNext();
+
+  const totalAll = runQuestions.length;
+  el.endTitle.textContent = (mode === "retry") ? "Fin du rattrapage !" : "Fin du QCM !";
+  el.endSummary.textContent = `Score : ${score}/${totalAll} • Questions vues : ${totalAll}.`;
+
+  if (wrongSnapshots.length > 0){
+    el.wrongBlock.style.display = "block";
+    el.wrongList.innerHTML = "";
+    wrongSnapshots.forEach(w => {
+      const div = document.createElement("div");
+      div.className = "wrong-item";
+      div.innerHTML = `
+        <div class="w-title">${w.source} — ${w.id}</div>
+        <div class="w-sub">${w.question.replaceAll("\n"," ")}</div>
+      `;
+      el.wrongList.appendChild(div);
+    });
+  } else {
+    el.wrongBlock.style.display = "none";
+  }
+
+  if (mode === "full" && wrongIds.size > 0) el.retryWrongBtn.style.display = "inline-block";
+  else el.retryWrongBtn.style.display = "none";
+}
+
+function renderAnswerUI(q){
+  el.options.innerHTML = "";
+  const multi = (q.correct && q.correct.length > 1);
+  const inputType = multi ? "checkbox" : "radio";
+
+  q.options.forEach((opt, i) => {
+    const wrap = document.createElement("div");
+    wrap.className = "opt";
+
+    const input = document.createElement("input");
+    input.type = inputType;
+    input.name = "opt";
+    input.id = "opt_" + i;
+    input.value = String(i);
+
+    const label = document.createElement("label");
+    label.setAttribute("for", input.id);
+
+    const tick = document.createElement("div");
+    tick.className = "tick";
+
+    const text = document.createElement("div");
+    text.className = "text";
+    text.textContent = opt;
+
+    label.appendChild(tick);
+    label.appendChild(text);
+
+    wrap.appendChild(input);
+    wrap.appendChild(label);
+    el.options.appendChild(wrap);
+
+    input.addEventListener("change", () => {
+      if (locked) return;
+      el.validateBtn.disabled = (getSelectedSet().length === 0);
+    });
+  });
+}
+
+function highlightAnswers(q, selected){
+  const optionLabels = [...el.options.querySelectorAll(".opt label")];
+  optionLabels.forEach((lab, i) => {
+    const isCorrect = (q.correct || []).includes(i);
+    const isSelected = selected.includes(i);
+    if (isCorrect){
+      lab.style.borderColor = "rgba(22,163,74,.55)";
+      lab.style.background = "rgba(22,163,74,.08)";
+    } else if (isSelected && !isCorrect){
+      lab.style.borderColor = "rgba(220,38,38,.45)";
+      lab.style.background = "rgba(220,38,38,.07)";
+    }
+  });
+}
+
+function nextNow(){
+  clearAutoNext();
+  index += 1;
+  renderQuestion();
+}
+function scheduleAutoNext(ms){
+  clearAutoNext();
+  autoNextId = setTimeout(() => nextNow(), ms);
+}
+
+function reveal(q, isCorrect, selectedArr, reason){
+  locked = true;
+  disableInputs(true);
+  el.validateBtn.disabled = true;
+
+  el.explanation.classList.add("show");
+  el.expText.textContent = (q.explanation || "");
+  el.skipBtn.style.display = "inline-block";
+
+  if (isCorrect){
+    el.card.classList.add("state-ok");
+    el.expChip.textContent = "OK";
+    el.expLabel.textContent = "Bonne réponse";
+    el.hint.textContent = "✅ Correct.";
+    highlightAnswers(q, selectedArr);
+    scheduleAutoNext(AUTO_NEXT_DELAY_CORRECT_MS);
+  } else {
+    el.card.classList.add("state-bad");
+    el.expChip.textContent = "NON";
+    el.expLabel.textContent = reason || "Incorrect";
+    el.hint.textContent = "❌ Incorrect.";
+    highlightAnswers(q, selectedArr);
+    scheduleAutoNext(AUTO_NEXT_DELAY_WRONG_MS);
+  }
+}
+
+function validate(){
+  if (locked) return;
+  const q = runQuestions[index];
+  stopTimer();
+
+  const selected = getSelectedSet();
+  if (selected.length === 0){
+    if (mode === "full") wrongIds.add(q.id);
+    wrongSnapshotsPushOnce(q);
+    reveal(q, false, [], "Aucune réponse sélectionnée");
+    return;
+  }
+
+  const correctSorted = (q.correct || []).slice().sort((a,b)=>a-b);
+  const isCorrect = arraysEqual(selected, correctSorted);
+
+  if (isCorrect){
+    score += 1;
+  } else {
+    if (mode === "full") wrongIds.add(q.id);
+    wrongSnapshotsPushOnce(q);
+  }
+
+  el.scoreText.textContent = String(score);
+  reveal(q, isCorrect, selected, isCorrect ? "OK" : "Mauvaise combinaison");
+}
+
+function onTimeUp(){
+  if (locked) return;
+  const q = runQuestions[index];
+  if (mode === "full") wrongIds.add(q.id);
+  wrongSnapshotsPushOnce(q);
+  reveal(q, false, getSelectedSet(), "Temps écoulé");
+}
+
+function renderQuestion(){
+  if (index >= runQuestions.length){ showEnd(); return; }
+
+  locked = false;
+  resetCardState();
+  setModeUI();
+
+  const q = runQuestions[index];
+  el.kicker.textContent = q.source;
+  el.questionText.textContent = q.question;
+
+  el.progressText.textContent = String(index + 1);
+  el.totalText.textContent = String(runQuestions.length);
+  el.scoreText.textContent = String(score);
+
+  renderAnswerUI(q);
+
+  el.validateBtn.textContent = "Valider";
+  el.validateBtn.disabled = true;
+
+  startTimer();
+}
+
+function startFull(){
+  mode = "full";
+  runQuestions = questions.slice();
+  index = 0; score = 0;
+  wrongIds = new Set();
+  wrongSnapshots = [];
+  locked = false;
+
+  el.endScreen.style.display = "none";
+  el.card.style.display = "block";
+  renderQuestion();
+}
+function startRetryWrong(){
+  mode = "retry";
+  const wrongOnly = questions.filter(q => wrongIds.has(q.id));
+  runQuestions = wrongOnly.slice();
+  index = 0; score = 0;
+  wrongSnapshots = [];
+  locked = false;
+
+  el.endScreen.style.display = "none";
+  el.card.style.display = "block";
+
+  if (runQuestions.length === 0){
+    el.card.style.display = "none";
+    el.endScreen.style.display = "grid";
+    el.endTitle.textContent = "Rattrapage";
+    el.endSummary.textContent = "Aucune question ratée à refaire.";
+    el.wrongBlock.style.display = "none";
+    el.retryWrongBtn.style.display = "none";
+    return;
+  }
+
+  renderQuestion();
+}
+
+el.validateBtn.addEventListener("click", validate);
+el.skipBtn.addEventListener("click", nextNow);
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && el.card.style.display !== "none"){
+    e.preventDefault();
+    if (!el.validateBtn.disabled) validate();
+  }
+  if ((e.key === "ArrowRight" || e.key === " ") && el.skipBtn.style.display !== "none"){
+    e.preventDefault();
+    nextNow();
+  }
+});
+
+el.restartBtn.addEventListener("click", startFull);
+el.retryWrongBtn.addEventListener("click", startRetryWrong);
+
+// INIT
+startFull();
+</script>
+</body>
+</html>
